@@ -1,79 +1,81 @@
-# this doesn't work
-# {% set data = load_setup_py_data() %}
-
 package:
-  name: {{ environ.get('CONDA_PKG') }}
-  version: {{ environ.get('CONDA_PKG_VERSION') }}
+  name: medaka
+  version: 2.0.1
 
 source:
-    path: ../
+  path: ../  # adjust this to where your custom medaka source is
 
 build:
   number: 0
-  entry_points:
-    - medaka = medaka.medaka:main
-    - medaka_counts = medaka.medaka_counts:main
-    - medaka_data_path = medaka.common:print_data_path
-    - medaka_version_report = medaka:report_binaries
+  script: python -m pip install . --no-deps -vv
 
 requirements:
-  host:
+  build:
     - {{ compiler('c') }}
-    - coreutils
+    - {{ compiler('cxx') }}
+    - cmake
+    - make
     - python
-    - cffi
-    # this is forced, to help along conda resolving deps
-    - htslib >=1.20
-    # don't understand why this is needed, but it is to get zlib.h
-    # when using htslib >=1.20
-    - zlib
+    - pip
+
+  host:
+    - python =3.11
+    - pip
+    - setuptools
+
   run:
-    - python
-    # python requirements, ordered as requirement.txt for convenience
-    - cffi
-    - python-edlib
-    - h5py==3.10.*
+    - python =3.11
+    - bcftools =1.21
+    - python_abi =3.11
+    - brotli-python =1.1.0
+    - cached-property =1.5.2
+    - cffi =1.17.1
+    - charset-normalizer =3.4.1
+    - colorama
+    - filelock
+    - fsspec
+    - gmpy2 =2.2.1
+    - grpcio =1.62.2
+    - gsl =2.7
+    - h5py =3.13.0
+    - hdf5 =1.14.3
+    - idna =3.10
     - intervaltree
-    - numpy >=1.21.0,<2.0.0
-    - mappy
-    - ont-fast5-api
-    - parasail-python
-    - pyabpoa
-    - pysam
-    - pyspoa
+    - jinja2
+    - k8 =0.2.5
+    - mappy =2.28
+    - minimap2 =2.28
+    - numpy =1.26.4
+    - ont-fast5-api =4.1.3
+    - packaging
+    - parasail-python =1.3.4
+    - pyabpoa =1.5.3
+    - pycparser
+    - pysam =0.22.1
+    - pysocks
+    - pyspoa =0.2.1
+    - python-edlib =1.3.9.post1
+    - pytorch =2.3.1
     - requests
-    - pytorch==2.3.*
-    # see pytorch/issues/123097
-    #- mkl==2024.0  # [osx] 
+    - samtools =1.21
+    - sortedcontainers
+    - sympy
     - tqdm
-    - wurlitzer
-    # other stuff
-    - samtools
-    - bcftools
-    - minimap2
-    - htslib >=1.20
+    - typing_extensions
+    - zstandard
 
 test:
   imports:
     - medaka
   commands:
     - medaka --help
-    - medaka_consensus -h
-    - medaka_variant -h
-    - medaka_data_path
-    - medaka_version_report
-
 
 about:
-  home: https://github.com/nanoporetech/medaka
-  summary: Neural network sequence error correction.
-  license: Oxford Nanopore Technologies PLC. Public License Version 1.0
-  license_family: OTHER
+  home: https://github.com/ethan-mcq/medaka
+  license: none
   license_file: LICENSE
-  dev_url: https://github.com/nanoporetech/medaka
-
+  summary: Custom version of Medaka for ONT polishing.
 
 extra:
   recipe-maintainers:
-    - epi2melabs-bot
-
+    - ethan-mcq
